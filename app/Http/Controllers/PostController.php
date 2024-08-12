@@ -13,6 +13,15 @@ class PostController extends Controller
         $this->middleware('auth:api');
     }
 
+    public function index()
+    {
+        // Retrieve all posts
+        $posts = Post::all();
+
+        // Return the posts as a JSON response
+        return response()->json($posts, 200);
+    }
+    
     public function store(Request $request)
     {
         $request->validate([
