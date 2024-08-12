@@ -16,8 +16,3 @@ Route::middleware('auth:api')->group(function () {
     Route::post('posts', [PostController::class, 'store']);
     Route::delete('posts/{id}', [PostController::class, 'destroy']);
 });
-
-// Default welcome route
-Route::get('/', function () {
-    return view('welcome');
-});
