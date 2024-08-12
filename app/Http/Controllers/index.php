@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PostController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api'); // Applies the 'auth:api' middleware to all methods in this controller
+    }
+
+    // Method to fetch all posts
+    public function index()
+    {
+        $posts = Post::all();
+        return response()->json($posts);
     }
 
     public function store(Request $request)

@@ -10,6 +10,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 // Protected routes
 Route::middleware('auth:api')->group(function () {
+    Route::get('viewposts', [PostController::class, 'index']); // Route to fetch all posts
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
     
