@@ -1,66 +1,289 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel JWT API for User Authentication and Post Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project is a simple API built with Laravel that uses JWT (JSON Web Token) for user authentication. Authenticated users can create, view, and delete posts. The API ensures that only the creators of a post can delete their own posts.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- User registration and login with JWT authentication.
+- Protected routes for creating and deleting posts.
+- Users can only delete their own posts.
+- Fetch all posts.
+  
+## Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Before you begin, ensure you have met the following requirements:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP**: 7.4 or higher
+- **Composer**: Latest version
+- **Laravel**: 8.x or higher
+- **MySQL**: 5.7+ or PostgreSQL
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the Repository**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+   ```bash
+   git clone https://github.com/lordwill1/blogapi.git
+   cd blogapi
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Install Dependencies**
 
-## Laravel Sponsors
+   Run the following command to install all the dependencies:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   composer install
+   ```
 
-### Premium Partners
+3. **Copy `.env` File**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   Copy the example environment file and create a new `.env` file:
 
-## Contributing
+   ```bash
+   cp .env.example .env
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Generate Application Key**
 
-## Code of Conduct
+   Run the following command to generate a new application key:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```bash
+   php artisan key:generate
+   ```
 
-## Security Vulnerabilities
+5. **Set Up Database**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   - Open the `.env` file and update the database configuration section with your database credentials:
+
+     ```env
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=your_database_name
+     DB_USERNAME=your_database_user
+     DB_PASSWORD=your_database_password
+     ```
+
+   - Run the migrations to create the required tables:
+
+     ```bash
+     php artisan migrate
+     ```
+
+6. **Install JWT Package**
+
+   Install the Laravel JWT package:
+
+   ```bash
+   composer require tymon/jwt-auth
+   ```
+
+7. **Publish JWT Configuration**
+
+   Publish the JWT configuration file:
+
+   ```bash
+   php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+   ```
+
+8. **Generate JWT Secret Key**
+
+   Generate the secret key for JWT:
+
+   ```bash
+   php artisan jwt:secret
+   ```
+
+## Usage
+
+### Starting the Server
+
+To start the development server, run:
+
+```bash
+php artisan serve
+```
+
+The application will be accessible at `http://127.0.0.1:8000`.
+
+### API Endpoints
+
+To see all end points
+
+```bash
+php artisan route:list
+```
+
+#### Authentication
+
+- **Register**
+
+  ```
+  POST /api/register
+  ```
+
+  **Request Body:**
+  
+  ```json
+  {
+      "name": "John Doe",
+      "email": "johndoe@example.com",
+      "password": "password",
+      "password_confirmation": "password"
+  }
+  ```
+
+  **Response:**
+
+  ```json
+  {
+      "user": { ... },
+      "token": "jwt-token-here"
+  }
+  ```
+
+- **Login**
+
+  ```
+  POST /api/login
+  ```
+
+  **Request Body:**
+  
+  ```json
+  {
+      "email": "johndoe@example.com",
+      "password": "password"
+  }
+  ```
+
+  **Response:**
+
+  ```json
+  {
+      "token": "jwt-token-here"
+  }
+  ```
+
+- **Logout**
+
+  ```
+  POST /api/logout
+  ```
+
+  **Request Header:**
+
+  ```http
+  Authorization: Bearer jwt-token-here
+  ```
+
+  **Response:**
+
+  ```json
+  {
+      "message": "Successfully logged out"
+  }
+  ```
+
+#### Post Management
+
+- **Create Post**
+
+  ```
+  POST /api/posts
+  ```
+
+  **Request Header:**
+
+  ```http
+  Authorization: Bearer jwt-token-here
+  ```
+
+  **Request Body:**
+
+  ```json
+  {
+      "title": "My First Post",
+      "content": "This is the content of my first post."
+  }
+  ```
+
+  **Response:**
+
+  ```json
+  {
+      "id": 1,
+      "title": "My First Post",
+      "content": "This is the content of my first post.",
+      "user_id": 1,
+      "created_at": "2024-08-12T10:00:00.000000Z",
+      "updated_at": "2024-08-12T10:00:00.000000Z"
+  }
+  ```
+
+- **View All Posts**
+
+  ```
+  GET /api/posts
+  ```
+
+  **Response:**
+
+  ```json
+  [
+      {
+          "id": 1,
+          "title": "My First Post",
+          "content": "This is the content of my first post.",
+          "user_id": 1,
+          "created_at": "2024-08-12T10:00:00.000000Z",
+          "updated_at": "2024-08-12T10:00:00.000000Z"
+      },
+      ...
+  ]
+  ```
+
+- **Delete Post**
+
+  ```
+  DELETE /api/posts/{id}
+  ```
+
+  **Request Header:**
+
+  ```http
+  Authorization: Bearer jwt-token-here
+  ```
+
+  **Response:**
+
+  ```json
+  {
+      "message": "Post deleted successfully"
+  }
+  ```
+
+## Testing with Postman
+
+1. **Register a New User**: Use the `/api/register` endpoint to create a new user.
+2. **Login**: Use the `/api/login` endpoint to authenticate and receive a JWT token.
+3. **Set Authorization Header**: For subsequent requests, include the JWT token in the `Authorization` header as `Bearer jwt-token-here`.
+4. **Create a Post**: Use the `/api/posts` endpoint to create a new post.
+5. **View Posts**: Use the `/api/viewposts` endpoint to fetch all posts.
+6. **Delete a Post**: Use the `/api/posts/{id}` endpoint to delete a post.
+
+## Troubleshooting
+
+### Common Errors
+
+- **404 Not Found for `/api/register`:** Ensure that your API routes are prefixed with `/api` and that your server is running at the correct URL (`http://127.0.0.1:8000`).
+- **"Method `index` does not exist"**: Ensure that the `index` method is defined in `PostController`.
+- **"Add `[attribute]` to fillable property"**: Ensure that you have added the required attributes to the `$fillable` property in your model.
+- **"Route [login] not defined"**: Ensure that your authentication routes are correctly defined in `api.php`.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed
+---
+
+This `README.md` file provides all the necessary information to understand, install, and use the Laravel JWT API project, as well as to troubleshoot common issues.
