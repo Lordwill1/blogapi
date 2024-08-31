@@ -2,34 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Post;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\PostRequest;
+use App\Services\PostService;
 
 class PostController extends Controller
 {
-    public function __construct()
+    protected $postService;
+
+    public function __construct(PostService $postService)
     {
         $this->middleware('auth:api');
+        $this->postService = $postService;
     }
 
-    public function index()
+    public function store(PostRequest $request)
     {
-        // Retrieve all posts
-        $posts = Post::all();
-
-        // Return the posts as a JSON response
-        return response()->json($posts, 200);
-    }
-    
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
-
-        $post = Post::create([
+        $post = $this->postService->createPost([
             'title' => $request->title,
             'content' => $request->content,
             'user_id' => auth()->user()->id,
@@ -40,14 +28,6 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
-
-        if ($post->user_id != auth()->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $post->delete();
-
-        return response()->json(['message' => 'Post deleted successfully']);
+        return $this->postService->deletePost($id);
     }
 }
